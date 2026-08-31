@@ -88,5 +88,5 @@ SheetBridge/
 
 1. **Клонируйте репозиторий**
    ```bash
-   git clone https://github.com/yourusername/sheetbridge.git
+   git clone https://github.com/YakovDev/-Lern_project-SheetBridge-
    cd sheetbridge
