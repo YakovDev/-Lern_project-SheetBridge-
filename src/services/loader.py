@@ -125,6 +125,3 @@ def load_excel(file_path: str, config: dict = None) -> list[dict]:
     return result
 
 
-
-
-
