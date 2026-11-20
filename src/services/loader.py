@@ -1,7 +1,8 @@
 from pathlib import Path
 
 import pandas as pd
-
+import logging
+logger = logging.getLogger("sheetbridge")
 # Определил путь до файла с операциями по счету/карте
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DATA_DIR = BASE_DIR / "data"
@@ -49,7 +50,7 @@ def load_excel(file_path: str, config: dict = None) -> list[dict]:
         # Дата-фрейм получили, колонки тоже, теперь надо отсортировать по дате.
         df = pd.read_excel(file_path)
     except Exception as e:
-        print(f"Ошибка чтения файла: {e}")
+        logger.error(f"Ошибка чтения файла: {e}")
         return []
     # 3. Привел все колонки к нижнему регистру.
     df.columns = df.columns.str.lower().str.strip()
@@ -59,7 +60,7 @@ def load_excel(file_path: str, config: dict = None) -> list[dict]:
     for key in required:
         col_name = mapping.get(key)
         if col_name not in df.columns:
-            print(f"Ошибка: колонка '{col_name}' (для поля '{key}') не найдена в файле.")
+            logger.error(f"Колонка '{col_name}' (для поля '{key}') не найдена в файле.")
             return []
     # 5. Преобразую колонку с датой в datetime и сортирую.
     data_col = mapping['date']
@@ -104,6 +105,8 @@ def load_excel(file_path: str, config: dict = None) -> list[dict]:
         # Номер карты (последние 4 цифры если есть)
         if card_col and card_col in df.columns and pd.notna(row[card_col]):
             card_number = str(row[card_col]).strip()
+            if "." in card_number:
+                card_number = card_number.split(".")[0]
             if len(card_number) >= 4:
                 card_number = card_number[-4:]
         else:
